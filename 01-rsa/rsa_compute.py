@@ -1,8 +1,8 @@
 import sys
 
-from cryptography.hazmat.primitives.asymmetric import rsa
+from cryptography import exceptions
 from cryptography.hazmat.primitives import serialization, hashes
-from cryptography.hazmat.primitives.asymmetric import padding
+from cryptography.hazmat.primitives.asymmetric import rsa, padding
 
 
 def generate_private_key(*, public_exponent=65537, key_size=2048):
@@ -52,3 +52,30 @@ def decrypt(private_key, ciphertext, encoding='UTF-8'):
             label=None
         )
     ).decode(encoding)
+
+
+def sign(private_key, message, *, encoding='UTF-8'):
+    return private_key.sign(
+        message.encode(encoding),
+        padding.PSS(
+            mgf=padding.MGF1(hashes.SHA256()),
+            salt_length=padding.PSS.MAX_LENGTH
+        ),
+        hashes.SHA256()
+    )
+
+
+def verify(public_key, message, signature, *, encoding='UTF-8'):
+    try:
+        public_key.verify(
+            signature,
+            message.encode(encoding),
+            padding.PSS(
+                mgf=padding.MGF1(hashes.SHA256()),
+                salt_length=padding.PSS.MAX_LENGTH
+            ),
+            hashes.SHA256()
+        )
+    except exceptions.InvalidSignature:
+        return False
+    return True
