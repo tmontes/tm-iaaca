@@ -26,11 +26,17 @@ def save_public_key(private_key, key_name, *, name_suffix='-public'):
 
 def load_public_key(filename):
     public_key_bytes = pathlib.Path(filename).read_bytes()
-    return serialization.load_pem_public_key(public_key_bytes)
+    try:
+        return serialization.load_pem_public_key(public_key_bytes)
+    except ValueError as error:
+        raise SystemExit(f'Could not load public key {filename!r}: {error}')
 
 
 def load_private_key(filename, key_password, encoding='UTF-8'):
     private_key_bytes = pathlib.Path(filename).read_bytes()
     if key_password is not None:
         key_password = key_password.encode(encoding)
-    return serialization.load_pem_private_key(private_key_bytes, key_password)
+    try:
+        return serialization.load_pem_private_key(private_key_bytes, key_password)
+    except (TypeError, ValueError) as error:
+        raise SystemExit(f'Could not load private key {filename!r}: {error}')
