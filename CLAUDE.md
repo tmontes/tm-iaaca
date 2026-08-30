@@ -23,7 +23,7 @@ Chapter directories map 1:1 onto `outline.md` parts:
 | `01-rsa/` | Part 1 — RSA fundamentals | implemented |
 | `02-certificates/` | Part 2 — X.509 certificates | implemented |
 | `03-ca/` | Part 3 — become a CA | implemented |
-| `04-tls/` | Part 4 — Flask/Waitress HTTPS + Requests | empty |
+| `04-tls/` | Part 4 — Flask/Hypercorn HTTPS + Requests | implemented |
 | `05-mitm/` | Part 5–6 — MITM and broken certificates | empty |
 
 `ca_compute.issue_certificate` already accepts a `dns_names` keyword that adds a Subject Alternative Name
@@ -50,7 +50,21 @@ a `Then break it:` list.
 
 ## Commands
 
-`uv`-managed project, `requires-python >= 3.14`. Dependencies: `cryptography`, `flask`, `waitress`, `requests`.
+`uv`-managed project, `requires-python >= 3.14`. Dependencies: `cryptography`, `flask`, `hypercorn`, `requests`.
+
+**The server is `hypercorn`, not Waitress** — Waitress cannot do TLS at all, it expects a reverse proxy.
+`outline.md` has been corrected in both places it mentioned Waitress. Hypercorn serves the Flask WSGI app
+directly (no `WSGIMiddleware` needed) and takes `--certfile` / `--keyfile` / `--keyfile-password`.
+
+**Certificates must carry key identifiers to work over TLS.** Python 3.14 ships OpenSSL 3.5, which enforces
+RFC 5280 strictly: a chain without `AuthorityKeyIdentifier` fails with *Missing Authority Key Identifier*,
+and a CA certificate without `KeyUsage` fails with *CA cert does not include key usage extension*. Hence
+`ca_compute` adds `SubjectKeyIdentifier` + critical `KeyUsage(key_cert_sign, crl_sign)` to CA certificates
+and `AuthorityKeyIdentifier` to every issued certificate. Manual signature checks pass without these; TLS
+does not.
+
+**Everything runs on `localhost` — no `/etc/hosts` edits, no sudo.** A hostname mismatch is demonstrated by
+issuing for `bob.local` and connecting to `localhost`.
 
 ```bash
 uv sync                       # create/refresh .venv from uv.lock

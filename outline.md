@@ -14,7 +14,7 @@
 - Python
 - `cryptography`
 - `flask`
-- `waitress`
+- `hypercorn`
 - `requests`
 - Web browser — optional
 
@@ -307,7 +307,7 @@ The answer:
 
 # 70–85 min — 🤝 Part 4: Make It Real
 
-Now use Flask + Waitress to create an actual HTTPS service.
+Now use Flask + Hypercorn to create an actual HTTPS service.
 
 Participants run something like:
 
