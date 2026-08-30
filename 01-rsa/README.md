@@ -1,10 +1,12 @@
 # RSA Fundamentals
 
-Use the given `rsa_compute.py` and `rsa_io.py` modules in each exercise.
+The `lib/` directory holds the modules you are given: `rsa_compute.py` and `rsa_io.py`
+for keys, `std_io.py` to read and write the terminal. Import them as
+`from lib import rsa_compute as compute`, and write your own scripts next to `lib/`.
 
 In this context *plain text* is human-readable text (Python `str` objects)
 while *ciphertext* is a binary payload (Python `bytes` objects);
-the functions in `rsa_io.py` may come in handy to read/write these things.
+the functions in `std_io.py` may come in handy to read/write these things.
 
 
 ## 1. Generate an RSA Key Pair

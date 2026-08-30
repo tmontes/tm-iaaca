@@ -1,7 +1,8 @@
 import sys
 
-import rsa_compute as compute
-import rsa_io as io
+from lib import rsa_compute as compute
+from lib import rsa_io as io
+from lib import std_io
 
 
 def cli_args(command=sys.argv[0], args=sys.argv[1:]):
@@ -16,7 +17,7 @@ if __name__ == '__main__':
 
     public_key_filename = cli_args()
     public_key = io.load_public_key(public_key_filename)
-    message = io.text_from_stdin(prompt='Message to verify: ')
-    signature = io.binary_from_stdin(prompt='Base64 signature: ')
+    message = std_io.read_text(prompt='Message to verify: ')
+    signature = std_io.read_binary(prompt='Base64 signature: ')
     verified = compute.verify(public_key, message, signature)
-    io.text_to_stdout(verified, lead='Verified: ')
+    std_io.write_text(verified, lead='Verified: ')

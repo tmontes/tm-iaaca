@@ -1,10 +1,8 @@
-import base64
 import pathlib
-import sys
 
 from cryptography.hazmat.primitives import serialization
 
-import rsa_compute as rsa
+from . import rsa_compute as rsa
 
 
 def _save_bytes(payload, *, filename):
@@ -36,29 +34,3 @@ def load_private_key(filename, key_password, encoding='UTF-8'):
     if key_password is not None:
         key_password = key_password.encode(encoding)
     return serialization.load_pem_private_key(private_key_bytes, key_password)
-
-
-def text_from_stdin(*, prompt):
-    prompt = prompt if sys.stdin.isatty() else ''
-    return input(prompt)
-
-
-def text_to_stdout(text, *, lead):
-    if sys.stdout.isatty():
-        print(lead, end='')
-    print(text)
-
-
-def binary_from_stdin(*, prompt):
-    prompt = prompt if sys.stdin.isatty() else ''
-    base64_text = input(prompt)
-    base64_bytes = base64_text.encode('ASCII')
-    return base64.b64decode(base64_bytes)
-
-
-def binary_to_stdout(payload, *, lead):
-    if sys.stdout.isatty():
-        print(lead, end='')
-    base64_bytes = base64.b64encode(payload)
-    base64_text = base64_bytes.decode('ASCII')
-    print(base64_text)

@@ -1,7 +1,7 @@
 import sys
 
-import rsa_compute as compute
-import rsa_io as io
+from lib import rsa_compute as compute
+from lib import rsa_io as io
 
 
 def cli_args(command=sys.argv[0], args=sys.argv[1:]):

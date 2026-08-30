@@ -1,7 +1,8 @@
 import sys
 
-import rsa_compute as compute
-import rsa_io as io
+from lib import rsa_compute as compute
+from lib import rsa_io as io
+from lib import std_io
 
 
 def cli_args(command=sys.argv[0], args=sys.argv[1:]):
@@ -18,6 +19,6 @@ if __name__ == '__main__':
 
     private_key_filename, key_password = cli_args()
     private_key = io.load_private_key(private_key_filename, key_password)
-    cyphertext = io.binary_from_stdin(prompt='Base64 ciphertext: ')
+    cyphertext = std_io.read_binary(prompt='Base64 ciphertext: ')
     plaintext = compute.decrypt(private_key, cyphertext)
-    io.text_to_stdout(plaintext, lead='Plaintext message: ')
+    std_io.write_text(plaintext, lead='Plaintext message: ')
