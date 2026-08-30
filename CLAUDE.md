@@ -21,13 +21,32 @@ Chapter directories map 1:1 onto `outline.md` parts:
 | Dir | Outline part | Status |
 |---|---|---|
 | `01-rsa/` | Part 1 — RSA fundamentals | implemented |
-| `02-certificates/` | Part 2 — X.509 certificates | empty |
-| `03-ca/` | Part 3 — become a CA | empty |
+| `02-certificates/` | Part 2 — X.509 certificates | implemented |
+| `03-ca/` | Part 3 — become a CA | implemented |
 | `04-tls/` | Part 4 — Flask/Waitress HTTPS + Requests | empty |
 | `05-mitm/` | Part 5–6 — MITM and broken certificates | empty |
 
+`ca_compute.issue_certificate` already accepts a `dns_names` keyword that adds a Subject Alternative Name
+extension. Chapter 3 never passes it; chapter 4 must, because TLS clients ignore the Common Name and match
+hostnames against SANs only.
+
 Each chapter has its own `README.md` — the participant-facing exercise brief (numbered exercises, describing
 which scripts *they* write and which support modules are given to them). The root `README.md` is still empty.
+
+## Chapter README style
+
+Terse. `*` bullets, one idea each; a preamble naming what `lib/` gained; numbered `##` sections; a final
+`## N. Parting Thoughts` that hands off to the next chapter's question. Sections that can be broken end with
+a `Then break it:` list.
+
+- **Say what a script does, never how it is called.** No CLI signatures, no example invocations, no filenames
+  — participants design their own interface, and the reference scripts at the chapter root are only one
+  possible answer.
+- **Prefer questions to statements.** "What did the CA actually check before signing?" beats explaining it.
+  The good questions have short, surprising answers ("nothing — you told it to").
+- **Bold** for the cast (**Alice**, **Bob**, **Eve**); `code` for subject names and identifiers (`bob`,
+  `workshop-ca`). Subject names are single tokens — no spaces to quote at the shell.
+- Show what participants will actually see: inspection prints `CN=bob`, so write `CN=bob`.
 
 ## Commands
 
@@ -76,6 +95,12 @@ propagated to every chapter that carries it**, and the copies are expected to st
 The reference scripts at each chapter root (`encrypt.py`, `create_certificate.py`, …) are **solutions, not
 handouts** — participants write their own. Producing the participant copy of a chapter means removing the
 root-level `*.py` and keeping `README.md` + `lib/`.
+
+**Only `lib/` accumulates. Scripts do not.** A chapter root carries just the scripts its own exercises
+introduce — `03-ca/` is `create_ca.py` + `issue_certificate.py`, nothing else. Never copy an earlier
+chapter's script forward: to exercise chapter 3 end to end, run `01-rsa/generate_keypair.py` and
+`02-certificates/inspect_certificate.py` from their own directories, which is what a participant does by
+hand with their own copies.
 
 ## Per-chapter code architecture
 
