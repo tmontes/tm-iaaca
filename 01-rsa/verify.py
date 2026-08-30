@@ -9,7 +9,7 @@ def cli_args(command=sys.argv[0], args=sys.argv[1:]):
         case (public_key_filename,):
             return public_key_filename
         case _:
-            raise SystemExit(f'Usage: {command} PRIVATE_KEY [KEY_PASSWORD]')
+            raise SystemExit(f'Usage: {command} PUBLIC_KEY')
 
 
 if __name__ == '__main__':
