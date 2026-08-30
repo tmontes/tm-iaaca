@@ -37,8 +37,9 @@ which scripts *they* write and which support modules are given to them). The roo
 uv sync                       # create/refresh .venv from uv.lock
 ```
 
-Scripts import their sibling modules by bare name (`import rsa_compute`), so **run them from inside the chapter
-directory** — cwd is on `sys.path` for `python script.py`:
+Scripts import the given modules from the chapter's `lib/` package (`from lib import rsa_io`), which
+resolves because the script's own directory is `sys.path[0]`. **Run them from inside the chapter
+directory** — `*.pem` output lands in the cwd:
 
 ```bash
 cd 01-rsa
@@ -49,6 +50,32 @@ uv run python sign.py alice-private.pem pw          # message on stdin → base6
 
 There is no test suite, linter, or formatter configured. Verification is by hand, at the shell, the way
 participants will do it.
+
+## The library accumulates across chapters
+
+Each chapter directory is a **self-contained workspace**. Its `lib/` package carries copies of the support
+modules from every earlier chapter, plus the new pair it introduces: `02-certificates/lib/` holds
+`std_io.py` + `rsa_compute.py` + `rsa_io.py` (verbatim copies) alongside its own `x509_compute.py` +
+`x509_io.py`. Chapter 3 adds a `ca_*` pair on top of those, and so on.
+
+**Inside `lib/`, modules import each other relatively** — `rsa_io.py` does `from . import rsa_compute as rsa`,
+`x509_io.py` does `from . import x509_compute as x509`. A library module imports a lower layer only when its
+own code needs it; no re-exporting on another module's behalf.
+
+**Scripts import each module directly, from wherever the function they need is defined.**
+`create_certificate.py` does `from lib import rsa_io` for `load_private_key` next to
+`from lib import x509_io as io` for `save_certificate`. The chapter's own topic keeps the short
+`compute`/`io` aliases; carried-over modules keep their full name, so provenance is visible at the call
+site (`rsa_io.load_private_key(...)`).
+
+Splitting given code into `lib/` keeps the chapter root as the participant's own workspace, and lets someone
+who fell behind start any chapter clean. The cost is duplication: **a fix to a carried-over module must be
+propagated to every chapter that carries it**, and the copies are expected to stay byte-identical
+(`diff` them). Participants carry their own `*.pem` files and their own scripts forward by hand.
+
+The reference scripts at each chapter root (`encrypt.py`, `create_certificate.py`, …) are **solutions, not
+handouts** — participants write their own. Producing the participant copy of a chapter means removing the
+root-level `*.py` and keeping `README.md` + `lib/`.
 
 ## Per-chapter code architecture
 
@@ -71,10 +98,13 @@ participants will do it.
 - `cli_args(command=sys.argv[0], args=sys.argv[1:])` uses `match`/`case` over the argv tuple, with a
   `case _: raise SystemExit(f'Usage: {command} ...')` fallback. Defaults are bound at def time deliberately —
   it makes the function testable from the REPL.
+- **All stdin/stdout code lives in `std_io.py`**, carried by every chapter: `read_text` / `write_text`,
+  `read_binary` / `write_binary`, `write_pem`. `rsa_io` is key files only, `x509_io` certificate files only.
 - Binary payloads (ciphertext, signatures) cross process boundaries **base64-armored** via
-  `io.binary_to_stdout` / `io.binary_from_stdin`, so scripts pipe into each other.
+  `std_io.write_binary` / `std_io.read_binary`, so scripts pipe into each other.
 - Prompts and output leads are printed **only when the stream is a TTY** — interactive use is friendly,
-  piped use stays clean. Keep this behaviour; it is what makes the shell composition above work.
+  piped use stays clean. This holds for *every* function in `std_io`; it is what makes the shell
+  composition above work. A labelled field is just `write_text(value, lead='Subject: ')`.
 - `_save_bytes` opens with `'xb'` and turns `FileExistsError` into a `SystemExit`: **key material is never
   silently overwritten.**
 - Private-key passwords are optional; when absent, `get_private_bytes` prints an explicit
