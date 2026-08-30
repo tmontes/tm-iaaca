@@ -24,7 +24,8 @@ Chapter directories map 1:1 onto `outline.md` parts:
 | `02-certificates/` | Part 2 — X.509 certificates | implemented |
 | `03-ca/` | Part 3 — become a CA | implemented |
 | `04-tls/` | Part 4 — Flask/Hypercorn HTTPS + Requests | implemented |
-| `05-mitm/` | Part 5–6 — MITM and broken certificates | empty |
+| `05-mitm/` | Part 5 — MITM and trust anchors | implemented |
+| *(chapter 6)* | Part 6 — break the PKI, diagnose broken certificates | not started |
 
 `ca_compute.issue_certificate` already accepts a `dns_names` keyword that adds a Subject Alternative Name
 extension. Chapter 3 never passes it; chapter 4 must, because TLS clients ignore the Common Name and match
@@ -102,9 +103,13 @@ own code needs it; no re-exporting on another module's behalf.
 site (`rsa_io.load_private_key(...)`).
 
 Splitting given code into `lib/` keeps the chapter root as the participant's own workspace, and lets someone
-who fell behind start any chapter clean. The cost is duplication: **a fix to a carried-over module must be
-propagated to every chapter that carries it**, and the copies are expected to stay byte-identical
-(`diff` them). Participants carry their own `*.pem` files and their own scripts forward by hand.
+who fell behind start any chapter clean. The cost is duplication: **any change to a carried-over module —
+fix or addition — must be propagated to every chapter that carries it**, and the copies are expected to stay
+byte-identical (`diff` them). Participants carry their own `*.pem` files and their own scripts forward by hand.
+
+A later chapter may extend an earlier module rather than add a new one when that is where the function
+belongs: `x509_compute.get_dns_names` exists for chapter 5's optional inspection exercise, because the
+script being extended already imports `x509_compute`. Propagate, then `diff`.
 
 The reference scripts at each chapter root (`encrypt.py`, `create_certificate.py`, …) are **solutions, not
 handouts** — participants write their own. Producing the participant copy of a chapter means removing the

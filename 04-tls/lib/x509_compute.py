@@ -42,6 +42,14 @@ def get_valid_until(certificate):
     return certificate.not_valid_after_utc
 
 
+def get_dns_names(certificate):
+    try:
+        extension = certificate.extensions.get_extension_for_class(x509.SubjectAlternativeName)
+    except x509.ExtensionNotFound:
+        return []
+    return extension.value.get_values_for_type(x509.DNSName)
+
+
 def get_certificate_bytes(certificate):
     return certificate.public_bytes(encoding=serialization.Encoding.PEM)
 

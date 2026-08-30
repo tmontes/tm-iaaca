@@ -26,4 +26,5 @@ if __name__ == '__main__':
         ca_private_key, ca_certificate, hostname, public_key, dns_names=(hostname,)
     )
     ca_name = x509_io.key_name(ca_private_key_filename)
-    x509_io.save_certificate(certificate, f'{ca_name}-{hostname}')
+    holder_name = x509_io.key_name(public_key_filename, name_suffix='-public')
+    x509_io.save_certificate(certificate, f'{ca_name}-{holder_name}-{hostname}')
