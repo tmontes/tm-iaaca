@@ -25,7 +25,7 @@ Chapter directories map 1:1 onto `outline.md` parts:
 | `03-ca/` | Part 3 — become a CA | implemented |
 | `04-tls/` | Part 4 — Flask/Hypercorn HTTPS + Requests | implemented |
 | `05-mitm/` | Part 5 — MITM and trust anchors | implemented |
-| *(chapter 6)* | Part 6 — break the PKI, diagnose broken certificates | not started |
+| `06-broken/` | Part 6 — break the PKI, diagnose broken certificates | implemented |
 
 `ca_compute.issue_certificate` already accepts a `dns_names` keyword that adds a Subject Alternative Name
 extension. Chapter 3 never passes it; chapter 4 must, because TLS clients ignore the Common Name and match
