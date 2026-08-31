@@ -18,9 +18,6 @@ chapter, or make a fresh one with the given `generate_keypair.py`.
 
 * Use it to create a certificate for **Bob**.
 
-* Note what *self-signed* means here:
-  `Subject` and `Issuer` name the same party.
-
 
 ## 2. Inspect a Certificate
 
@@ -29,6 +26,9 @@ chapter, or make a fresh one with the given `generate_keypair.py`.
 
 * Run it on **Bob**'s certificate.
   Confirm the public key it carries is the one in `bob-public.pem`.
+
+* Note what *self-signed* means here:
+  `Subject` and `Issuer` name the same party.
 
 * Which of those fields did **Bob** choose himself?
 
