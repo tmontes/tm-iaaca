@@ -9,5 +9,9 @@ wheels/
 # Virtual environments
 .venv
 
+# Locks
+.python-version
+uv.lock
+
 # PEM files
 *.pem
