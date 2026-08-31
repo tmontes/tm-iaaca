@@ -2,10 +2,11 @@
 
 The `webapp.py` beside this README is given: a minimal Flask application.
 It is served by `hypercorn`, which speaks TLS directly.
+`generate_keypair.py` is beside it, as always.
 `lib/` gains nothing this chapter; everything you need is already there.
 
-Bring your `generate_keypair.py`, `create_ca.py`, `issue_certificate.py` and
-`inspect_certificate.py` along, then set up `workshop-ca` and a key pair for `bob`.
+Bring your `create_ca.py`, `issue_certificate.py` and `inspect_certificate.py` along,
+then set up `workshop-ca` and a key pair for `bob`.
 
 Every certificate so far has been checked by hand. Now a TLS client does it,
 and it is far less forgiving than you were.
@@ -71,8 +72,6 @@ Then break it:
 * Serve the certificate your `issue_certificate.py` makes for `localhost`.
   Trusted CA, right name in the subject, not expired — refused anyway.
   Which part of the certificate was the client actually reading?
-
-* Issue a certificate for `bob.local` and serve it while **Alice** asks for `localhost`.
 
 * `requests.get` also accepts `verify=False`. Give `fetch.py` a way to ask for that,
   then try it and read what `requests` says about it.

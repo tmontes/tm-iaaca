@@ -38,6 +38,9 @@ Participants progressively build the answer by implementing the cryptographic pi
 | 85–110 min | 😈 MITM | Interception and trust anchors |
 | 110–120 min | 🧩 Break the PKI | Diagnose deliberately broken certificates |
 
+> This schedule is the original design. The material as built costs about 153 minutes —
+> see `TIMING.md` for the per-chapter measurements and two costed alternatives.
+
 ---
 
 # 0–10 min — 🎭 The Setup

@@ -7,7 +7,7 @@ A certificate is a public key and an identity, bundled with a validity period
 and a serial number, and *signed*. You already know how to sign things.
 
 You will need a key pair to work with: copy **Bob**'s over from the previous
-chapter, or bring your `generate_keypair.py` along and make a fresh one.
+chapter, or make a fresh one with the given `generate_keypair.py`.
 
 
 ## 1. Create a Self-Signed Certificate

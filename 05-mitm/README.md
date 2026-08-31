@@ -1,12 +1,12 @@
 # The Man in the Middle
 
-Three things beside this README are given: the same `webapp.py` as the previous chapter,
+Given beside this README: the same `webapp.py` and `generate_keypair.py` as before,
 a `tcp_proxy.py` that relays bytes and shows you every one of them, and a `tls_proxy.py`
 that speaks TLS to both ends and prints what it finds in between.
 `lib/` gains nothing.
 
-Bring your `generate_keypair.py`, `create_ca.py`, `issue_server_certificate.py`
-and `fetch.py` along. Then set up `workshop-ca`, key pairs for `bob` and `eve`,
+Bring your `create_ca.py`, `issue_server_certificate.py` and `fetch.py` along.
+Then set up `workshop-ca`, key pairs for `bob` and `eve`,
 and issue **Bob** a certificate for `localhost`.
 
 **Alice** trusts `workshop-ca`. Only `workshop-ca`.

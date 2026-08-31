@@ -6,7 +6,7 @@ The `x509_*.py`, `rsa_*.py` and `std_io.py` modules came along from the previous
 **Bob** issued his own certificate and it convinced nobody.
 Now someone else issues it for him.
 
-Generate key pairs for `bob` and `eve` before you start, with your `generate_keypair.py`.
+Generate key pairs for `bob` and `eve` before you start, with the given `generate_keypair.py`.
 The certificate authorities will make their own.
 
 

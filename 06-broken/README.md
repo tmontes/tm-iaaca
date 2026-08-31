@@ -1,10 +1,10 @@
 # Break the PKI
 
-The `webapp.py` beside this README is given, the same one as before.
+The `webapp.py` and `generate_keypair.py` beside this README are given, the same as before.
 `lib/` gains nothing — though it has been hiding something you have not used yet.
 
-Bring your `generate_keypair.py`, `create_ca.py`, `issue_certificate.py`,
-`issue_server_certificate.py`, `fetch.py` and `inspect_certificate.py` along.
+Bring your `create_ca.py`, `issue_certificate.py`, `issue_server_certificate.py`,
+`fetch.py` and `inspect_certificate.py` along.
 Set up `workshop-ca`, `totally-legit-ca`, and a key pair for `bob`.
 
 **Alice** trusts `workshop-ca`, and nothing else, for the whole of this chapter.

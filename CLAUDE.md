@@ -34,6 +34,10 @@ hostnames against SANs only.
 Each chapter has its own `README.md` — the participant-facing exercise brief (numbered exercises, describing
 which scripts *they* write and which support modules are given to them). The root `README.md` is still empty.
 
+**`TIMING.md` is the delivery budget.** The material as built runs ~153 minutes against a 120-minute
+slot, so **adding an exercise costs something that is already overdrawn** — check it before proposing new
+material, and record the cost there. `outline.md` keeps the original schedule as the design record.
+
 ## Chapter README style
 
 Terse. `*` bullets, one idea each; a preamble naming what `lib/` gained; numbered `##` sections; a final
@@ -111,9 +115,15 @@ A later chapter may extend an earlier module rather than add a new one when that
 belongs: `x509_compute.get_dns_names` exists for chapter 5's optional inspection exercise, because the
 script being extended already imports `x509_compute`. Propagate, then `diff`.
 
-The reference scripts at each chapter root (`encrypt.py`, `create_certificate.py`, …) are **solutions, not
-handouts** — participants write their own. Producing the participant copy of a chapter means removing the
-root-level `*.py` and keeping `README.md` + `lib/`.
+Two kinds of file sit at a chapter root, and **only the README distinguishes them**. Each chapter's
+preamble names what is **given**: `generate_keypair.py` in every chapter, `webapp.py` in 04–06, the two
+proxies in 05. Everything else at the root (`encrypt.py`, `create_certificate.py`, `fetch.py`, …) is a
+**reference solution** — participants write their own. Producing the participant copy of a chapter means
+deleting the solutions and keeping `README.md`, `lib/`, and the given scripts.
+
+`generate_keypair.py` is given rather than written so the first ten minutes teach the conventions by
+reading a complete example. Its copies stay byte-identical, and it keeps the chapter-1 `compute`/`io`
+aliases everywhere, since a given file is copied verbatim rather than rewritten per chapter.
 
 **Only `lib/` accumulates. Scripts do not.** A chapter root carries just the scripts its own exercises
 introduce — `03-ca/` is `create_ca.py` + `issue_certificate.py`, nothing else. Never copy an earlier
