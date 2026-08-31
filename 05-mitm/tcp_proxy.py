@@ -1,13 +1,24 @@
 import asyncio
+import re
 import sys
 
 CHUNK_SIZE = 4096
-# Generous enough to reach the host name a TLS client sends in the clear.
 DUMP_LIMIT = 256
+TEXT_LIMIT = 100
+# Runs of plain ASCII long enough not to be a coincidence in encrypted noise.
+PRINTABLE_RUN = re.compile(rb'[ -~]{8,}')
+
+
+def printable_text(payload):
+    runs = (match.group().decode('ASCII') for match in PRINTABLE_RUN.finditer(payload))
+    text = ' | '.join(runs)
+    return text if len(text) <= TEXT_LIMIT else f'{text[:TEXT_LIMIT]}...'
 
 
 def dump(direction, payload):
     print(f'{direction}  {len(payload)} bytes')
+    if text := printable_text(payload):
+        print(f'    text  {text}')
     shown = payload[:DUMP_LIMIT]
     for offset in range(0, len(shown), 16):
         chunk = shown[offset:offset + 16]

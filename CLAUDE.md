@@ -55,18 +55,21 @@ a `Then break it:` list.
 
 ## Commands
 
-`uv`-managed project, `requires-python >= 3.14`. Dependencies: `cryptography`, `flask`, `hypercorn`, `requests`.
+`uv`-managed project, `requires-python >= 3.12`. Dependencies: `cryptography`, `flask`, `hypercorn`, `requests`.
+Verified on 3.12.10 (OpenSSL 3.0.16) and 3.14.7 (OpenSSL 3.5.7) — identical behaviour throughout, including
+every error message the chapters rely on.
 
 **The server is `hypercorn`, not Waitress** — Waitress cannot do TLS at all, it expects a reverse proxy.
 `outline.md` has been corrected in both places it mentioned Waitress. Hypercorn serves the Flask WSGI app
 directly (no `WSGIMiddleware` needed) and takes `--certfile` / `--keyfile` / `--keyfile-password`.
 
-**Certificates must carry key identifiers to work over TLS.** Python 3.14 ships OpenSSL 3.5, which enforces
-RFC 5280 strictly: a chain without `AuthorityKeyIdentifier` fails with *Missing Authority Key Identifier*,
-and a CA certificate without `KeyUsage` fails with *CA cert does not include key usage extension*. Hence
-`ca_compute` adds `SubjectKeyIdentifier` + critical `KeyUsage(key_cert_sign, crl_sign)` to CA certificates
-and `AuthorityKeyIdentifier` to every issued certificate. Manual signature checks pass without these; TLS
-does not.
+**Certificates must carry key identifiers to work over TLS.** OpenSSL 3.5 (shipped with Python 3.14)
+enforces RFC 5280 strictly: a chain without `AuthorityKeyIdentifier` fails with *Missing Authority Key
+Identifier*, and a CA certificate without `KeyUsage` fails with *CA cert does not include key usage
+extension*. Hence `ca_compute` adds `SubjectKeyIdentifier` + critical `KeyUsage(key_cert_sign, crl_sign)`
+to CA certificates and `AuthorityKeyIdentifier` to every issued certificate. Manual signature checks pass
+without these; TLS does not. OpenSSL 3.0 (Python 3.12) is laxer and would accept certificates lacking them —
+**do not remove them on that basis**, or the material breaks for anyone on a newer interpreter.
 
 **Everything runs on `localhost` — no `/etc/hosts` edits, no sudo.** A hostname mismatch is demonstrated by
 issuing for `bob.local` and connecting to `localhost`.

@@ -3,7 +3,7 @@ name = "trust-me-i-am-a-cert-auth"
 version = "0.1.0"
 description = "Trust me, I'm a Certificate Authority"
 readme = "README.md"
-requires-python = ">=3.14"
+requires-python = ">=3.12"
 dependencies = [
     "cryptography>=50.0.0",
     "flask>=3.1.3",

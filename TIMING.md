@@ -69,7 +69,7 @@ Places to skip when running late, in the order I would spend them:
 
 ## Independent of length
 
-Make `uv sync` and a Python 3.14 check **pre-work**, sent out before the session. It is not in the
+Make `uv sync` and a Python 3.12 check **pre-work**, sent out before the session. It is not in the
 153 minutes, and a room discovering toolchain problems at minute 5 loses 10–15 minutes of the
 budget there is least of.
 
