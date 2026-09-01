@@ -4,7 +4,7 @@ The `lib/` directory holds the modules you are given: `rsa_compute.py` and `rsa_
 for keys, `std_io.py` to read and write the terminal. Import them as
 `from lib import rsa_compute as compute`, and write your own scripts next to `lib/`.
 
-`generate_keypair.py` is given too, and every chapter has a copy.
+`create_keypair.py` is given too — the one script you are handed whole.
 It is the shape all of these scripts take — read it before writing your own.
 
 In this context *plain text* is human-readable text (Python `str` objects)
@@ -14,7 +14,7 @@ the functions in `std_io.py` may come in handy to read/write these things.
 
 ## 1. Generate an RSA Key Pair
 
-* Read `generate_keypair.py`: a `cli_args()` that matches on the command line,
+* Read `create_keypair.py`: a `cli_args()` that matches on the command line,
   then a `__main__` block that reads arguments, calls `compute`, and writes with `io`.
   Nothing else. Yours will look like this.
 

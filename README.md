@@ -46,7 +46,7 @@ $ uv sync
 Then activate the environment or prefix commands with `uv run` as in:
 
 ```console
-$ uv run python generate_keypair.py alice
+$ uv run python create_keypair.py alice
 ```
 
 ### Without uv
@@ -60,7 +60,7 @@ $ python -m pip install -r requirements.txt
 Then commands are plain:
 
 ```console
-$ python generate_keypair.py alice
+$ python create_keypair.py alice
 ```
 
 
@@ -68,7 +68,7 @@ $ python generate_keypair.py alice
 
 ```console
 $ cd 01-rsa
-$ python generate_keypair.py smoketest
+$ python create_keypair.py smoketest
 WARNING: Private key not encrypted!
 Created file 'smoketest-private.pem'.
 Created file 'smoketest-public.pem'.
@@ -91,8 +91,8 @@ One directory per chapter, worked in order:
 | MITM | `04-mitm/` | Intercept the connection and discover why trust matters. |
 | Break It | `05-broken/` | Certificates that fail and checks that catch them. |
 
-Each directory is self-contained with everything it needs inside it, so you can
-start any chapter from a clean slate:
+Every chapter carries the whole `lib/` it needs, so you can start any chapter from a
+clean slate:
 
 ```
 03-ca-tls/
@@ -105,8 +105,7 @@ start any chapter from a clean slate:
 │   ├── x509_io.py           loading and saving certificate files
 │   ├── ca_compute.py        requesting certificates, and signing them as an authority
 │   └── ca_io.py             the files a request and an authority need
-├── generate_keypair.py    tools you are given
-├── create_csr.py
+├── create_csr.py          tools you are given
 ├── create_server_csr.py
 ├── webapp.py
 └── ...                    your own scripts go here
@@ -118,18 +117,31 @@ chapter 2 adds `x509_*`;
 chapter 3 adds `ca_*`;
 chapters 4 and 5 carry all of them.
 
-Tools you are given, beyond `lib/`:
+Unlike `lib/`, scripts do not accumulate: each one appears once, in the chapter that
+introduces it. Tools you are given, beyond `lib/`:
 
-* `generate_keypair.py` — in every chapter; read it for review and inspiration.
-* `create_csr.py` and `create_server_csr.py` — in chapters 3 to 5; how a subject asks
+* `create_keypair.py` — chapter 1; read it for review and inspiration. It writes both
+  halves of the pair, which only chapter 1 needs.
+* `create_private_key.py` — chapter 2; the same thing writing the private key alone.
+  From there on a public key travels inside a certificate, so this is the one the rest
+  of the workshop uses.
+* `create_csr.py` and `create_server_csr.py` — chapter 3; how a subject asks
   a CA for a certificate.
-* `webapp.py` — in chapters 3 to 5; a minimal Flask application to serve over TLS/HTTPS.
-* `tcp_proxy.py` and `tls_proxy.py` — in chapter 4; **Eve**'s evil tools.
+* `webapp.py` — chapter 3; a minimal Flask application to serve over TLS/HTTPS.
+* `tcp_proxy.py` and `tls_proxy.py` — chapter 4; **Eve**'s evil tools.
 
 **Your scripts live at the chapter root**, next to `lib/`, and you run them from there; they
-read and write files in the current directory. Later chapters reuse what you wrote earlier, so
-copy those scripts across as you go, along with any `*.pem` files you want to keep. Each
-chapter's README opens by saying what to bring.
+read and write files in the current directory. Later chapters reuse earlier scripts, both
+yours and the given ones. Either copy them across as you go, or leave them where they are
+and name the path — what matters is the directory you run *from*, since that is where the
+`*.pem` files land:
+
+```console
+$ cd 03-ca-tls
+$ python ../02-certificates/create_private_key.py bob s3cr3t   # → 03-ca-tls/bob-private.pem
+```
+
+Each chapter's README opens by saying what it needs.
 
 Every key and certificate you make is yours and stays out of version control: `*.pem` is
 ignored by git.

@@ -7,9 +7,9 @@ A certificate is a public key and an identity, bundled with a validity period
 and a serial number, and *signed*. You already know how to sign things.
 
 You will need a key pair to work with: copy **Bob**'s private key over from the
-previous chapter, or make a fresh one with the given `generate_keypair.py`.
+previous chapter, or make a fresh one with the given `create_private_key.py`.
 
-From here on that script writes the private key and nothing else.
+From here on that is all you need: it writes the private key and nothing else.
 A public key no longer travels as a file of its own — a certificate is how it travels now.
 
 

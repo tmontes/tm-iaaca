@@ -4,9 +4,9 @@
 The `x509_*.py`, `rsa_*.py` and `std_io.py` modules came along from the previous chapter, unchanged.
 
 Given beside this README: `webapp.py`, a minimal Flask application, served by `hypercorn`,
-which speaks TLS directly; `generate_keypair.py`, as always; and `create_csr.py` and
-`create_server_csr.py`, which build *certificate signing requests* — the thing a subject
-sends a CA when it wants a certificate. Read them: there is less in a request than you might expect.
+which speaks TLS directly; and `create_csr.py` and `create_server_csr.py`, which build
+*certificate signing requests* — the thing a subject sends a CA when it wants a certificate.
+Read them: there is less in a request than you might expect.
 
 Bring your `inspect_certificate.py` along, and generate a key pair for `bob`.
 

@@ -37,11 +37,14 @@ which scripts *they* write and which support modules are given to them).
 
 ## Public keys are not files
 
-`generate_keypair.py` writes a public key file **only in chapter 1**, where certificates do not exist yet and
-a bare public key genuinely has to travel between Alice and Bob. From chapter 2 on, a public key lives in
-exactly one place: the certificate that carries it. `rsa_io.save_public_key` and `rsa_io.load_public_key`
-still exist in every chapter's copy, because `rsa_io.py` stays byte-identical everywhere and only chapter 1
-calls them. Don't delete them, and don't reintroduce `-public.pem` anywhere else.
+`create_keypair.py` writes a public key file, and lives **only in chapter 1** — where certificates do not
+exist yet and a bare public key genuinely has to travel between Alice and Bob. From chapter 2 on, a public
+key lives in exactly one place: the certificate that carries it, so chapter 2 gives `create_private_key.py`
+instead and chapters 3–5 reach back for *that* one. The two differ by a single line, the
+`io.save_public_key` call; keeping both is what stops a `-public.pem` appearing in a chapter that has no
+use for it. `rsa_io.save_public_key` and `rsa_io.load_public_key` still exist in every chapter's copy,
+because `rsa_io.py` stays byte-identical everywhere and only chapter 1 calls them. Don't delete them, and
+don't reintroduce `-public.pem` anywhere else.
 
 Two consequences that are easy to undo by accident:
 
@@ -109,12 +112,12 @@ uv sync                       # create/refresh .venv from uv.lock
 ```
 
 Scripts import the given modules from the chapter's `lib/` package (`from lib import rsa_io`), which
-resolves because the script's own directory is `sys.path[0]`. **Run them from inside the chapter
-directory** — `*.pem` output lands in the cwd:
+resolves because the script's own directory is `sys.path[0]`. **Run them with the chapter directory as
+cwd** — `*.pem` output lands there, while each script still finds its own `lib/`:
 
 ```bash
 cd 01-rsa
-uv run python generate_keypair.py alice s3cr3t      # → alice-private.pem, alice-public.pem
+uv run python create_keypair.py alice s3cr3t        # → alice-private.pem, alice-public.pem
 echo "hello Bob" | uv run python encrypt.py bob-public.pem | uv run python decrypt.py bob-private.pem pw
 uv run python sign.py alice-private.pem pw          # message on stdin → base64 signature on stdout
 ```
@@ -149,24 +152,28 @@ belongs: `x509_compute.get_dns_names` exists for chapter 5's optional inspection
 script being extended already imports `x509_compute`. Propagate, then `diff`.
 
 Two kinds of file sit at a chapter root, and **only the README distinguishes them**. Each chapter's
-preamble names what is **given**: `generate_keypair.py` in every chapter, `create_csr.py` +
-`create_server_csr.py` + `webapp.py` in 03–05, the two proxies in 04. Everything else at the root
-(`encrypt.py`, `create_certificate.py`, `fetch.py`, …) is a **reference solution** — participants write their
-own. Producing the participant copy of a chapter means deleting the solutions and keeping `README.md`,
-`lib/`, and the given scripts.
+preamble names what is **given**: `create_keypair.py` in 01, `create_private_key.py` in 02, `create_csr.py`
++ `create_server_csr.py` + `webapp.py` in 03, the two proxies in 04. Everything else at the root
+(`encrypt.py`, `create_certificate.py`, `fetch.py`, …) is a **reference solution** — participants write
+their own. Producing the participant copy of a chapter means deleting the solutions and keeping
+`README.md`, `lib/`, and the given scripts. `05-broken/` gives nothing and solves nothing: it is
+`README.md` + `lib/`.
 
-`generate_keypair.py` is given rather than written so the first ten minutes teach the conventions by
-reading a complete example. It keeps the chapter-1 `compute`/`io` aliases everywhere, since a given file is
-copied verbatim rather than rewritten per chapter. **It is the one given script whose copies are not all
-byte-identical:** chapter 1's writes a public key file too, chapters 2–5 write the private key only. The
-02–05 copies must stay byte-identical to each other; the CSR scripts and `webapp.py` are byte-identical
-across every chapter that carries them.
+The keypair script is given rather than written so the first ten minutes teach the conventions by reading
+a complete example. It keeps the chapter-1 `compute`/`io` aliases, which is why every later script that
+carries a module over spells the full name instead.
 
-**Only `lib/` accumulates. Scripts do not.** A chapter root carries just the scripts its own exercises
-introduce — `03-ca-tls/` is `create_ca.py` + `issue_certificate.py` + `fetch.py`, nothing else. Never copy an
-earlier chapter's script forward: to exercise chapter 3 end to end, run `01-rsa/generate_keypair.py` and
-`02-certificates/inspect_certificate.py` from their own directories, which is what a participant does by
-hand with their own copies.
+Scripts are named for what they produce, with `create_` as the default verb — `create_keypair`,
+`create_private_key`, `create_certificate`, `create_ca`, `create_csr`. Reserve another verb for something
+that is genuinely not creation (`inspect_`, `verify_`, `issue_`, `fetch`).
+
+**Only `lib/` accumulates. Scripts do not — each one exists exactly once**, in the chapter that introduces
+it, and `03-ca-tls/` is `create_ca.py` + `issue_certificate.py` + `fetch.py` plus its three given files.
+Never copy a script forward into another chapter directory: to exercise chapter 3 end to end, invoke
+`../02-certificates/create_private_key.py` and `../02-certificates/inspect_certificate.py` **from inside
+`03-ca-tls/`**. The script's own directory is `sys.path[0]`, so each finds its own `lib/`; the cwd is where
+the `*.pem` files land. Participants may instead copy those scripts across by hand — both work, and the
+READMEs deliberately say what a chapter needs rather than where to put it.
 
 ## Per-chapter code architecture
 
@@ -180,7 +187,7 @@ hand with their own copies.
    (`verify()` catches `InvalidSignature` → `False`).
 2. `<topic>_io.py` — everything impure: PEM load/save, stdin/stdout. Imports the compute module
    (as `rsa`, from `rsa_io`'s point of view).
-3. Thin CLI scripts (`generate_keypair.py`, `encrypt.py`, …) — one exercise each. They import
+3. Thin CLI scripts (`create_keypair.py`, `encrypt.py`, …) — one exercise each. They import
    `rsa_compute as compute` and `rsa_io as io`, and contain nothing but a `cli_args()` function and a
    `if __name__ == '__main__':` block that reads args, loads keys, calls compute, writes output.
 

@@ -1,12 +1,12 @@
 # The Man in the Middle
 
-Given beside this README: the same `webapp.py`, `generate_keypair.py`, `create_csr.py`
-and `create_server_csr.py` as before, a `tcp_proxy.py` that relays bytes and shows you
-every one of them, and a `tls_proxy.py` that speaks TLS to both ends and prints what it
-finds in between.
+Given beside this README: a `tcp_proxy.py` that relays bytes and shows you every one of
+them, and a `tls_proxy.py` that speaks TLS to both ends and prints what it finds in between.
 `lib/` gains nothing.
 
 Bring your `create_ca.py`, `issue_certificate.py` and `fetch.py` along.
+`webapp.py`, `create_csr.py` and `create_server_csr.py` are the ones you were given
+in the previous chapter, and `create_private_key.py` the one from the chapter before that.
 Then set up `workshop-ca`, key pairs for `bob` and `eve`,
 and issue **Bob** a certificate for `localhost`.
 

@@ -8,7 +8,7 @@ two-hour design; this file is what the chapters turned out to cost.
 command run, 1–2 min per discussion question. Workshop pace is set by the slowest third of the
 room, not the median, so treat these as optimistic.
 
-**Already applied:** `generate_keypair.py` is given in every chapter rather than written; the
+**Already applied:** `create_keypair.py` is given rather than written; the
 `bob.local` break-it bullet is gone from the TLS material (it duplicated `05-broken` drill 2); and
 the CA and TLS chapters have been merged. All three are folded into the numbers below.
 
