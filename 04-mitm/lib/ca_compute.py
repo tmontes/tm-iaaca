@@ -51,6 +51,7 @@ def create_csr(private_key, subject_name, *, dns_names=()):
     return builder.sign(private_key, hashes.SHA256())
 
 
+# For reading a request in the REPL: the CA deliberately never calls this.
 def get_csr_subject(csr):
     return csr.subject.rfc4514_string()
 
