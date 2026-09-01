@@ -6,7 +6,7 @@ though it has been hiding something you have not used yet.
 Bring your `create_ca.py`, `issue_certificate.py`, `fetch.py`
 and `inspect_certificate.py` along, with the `create_private_key.py`, `webapp.py`,
 `create_csr.py` and `create_server_csr.py` you were given earlier.
-Set up `workshop-ca`, `totally-legit-ca`, and a key pair for `bob`.
+Set up `workshop-ca`, `evil-ca`, and a key pair for `bob`.
 
 **Alice** trusts `workshop-ca`, and nothing else, for the whole of this chapter.
 **Bob** serves on 8443:
@@ -32,7 +32,7 @@ No new scripts here. Only certificates that do not work, and the question of why
 Serve each of these to **Alice** in turn. For each one, predict the error
 before you run it, then read what she actually says.
 
-* One issued by `totally-legit-ca` for `localhost`.
+* One issued by `evil-ca` for `localhost`.
 
 * One issued by `workshop-ca` for `bob.local`.
 

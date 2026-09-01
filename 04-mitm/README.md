@@ -51,7 +51,7 @@ $ python tcp_proxy.py 9000 8443
 
 Leave **Bob** serving on 8443, and stop the wiretap — **Eve** is done listening.
 
-* Have **Eve** set up a CA of her own — `totally-legit-ca`, as in the previous chapter —
+* Have **Eve** set up a CA of her own — `evil-ca`, as in the previous chapter —
   and issue herself a certificate for `localhost`.
 
 * Put her in front of **Bob**, presenting that certificate:

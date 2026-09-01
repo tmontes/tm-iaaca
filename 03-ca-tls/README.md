@@ -115,14 +115,15 @@ Then break it:
 
 ## 5. Which Certificate Should Alice Trust?
 
-* Have **Eve** set up a CA of her own, `totally-legit-ca`,
+* Have **Eve** set up a CA of her own, `evil-ca`,
   and have it issue her a certificate for `localhost` whose subject is `bob`.
 
 * Inspect it beside **Bob**'s. Both are signed by a CA, both say `Subject: CN=bob`,
   both cover `localhost`, neither has expired.
   Which one should **Alice** trust, and what exactly is she deciding?
 
-* The filenames name their issuer; **Eve** would not be so helpful.
+* The filenames name their issuer; **Eve** would not be so helpful —
+  nor would she call it `evil-ca`.
   Where does the certificate itself say who issued it — and could it lie?
 
 * Serve **Eve**'s certificate and point `fetch.py` at it, still trusting `workshop-ca`.
