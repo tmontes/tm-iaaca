@@ -118,7 +118,7 @@ chapter 3 adds `ca_*`;
 chapters 4 and 5 carry all of them.
 
 Unlike `lib/`, scripts do not accumulate: each one appears once, in the chapter that
-introduces it. Tools you are given, beyond `lib/`:
+introduces it — `webapp.py` excepted. Tools you are given, beyond `lib/`:
 
 * `create_keypair.py` — chapter 1; read it for review and inspiration. It writes both
   halves of the pair, which only chapter 1 needs.
@@ -127,7 +127,9 @@ introduces it. Tools you are given, beyond `lib/`:
   of the workshop uses.
 * `create_csr.py` and `create_server_csr.py` — chapter 3; how a subject asks
   a CA for a certificate.
-* `webapp.py` — chapter 3; a minimal Flask application to serve over TLS/HTTPS.
+* `webapp.py` — chapters 3, 4 and 5; a minimal Flask application to serve over TLS/HTTPS.
+  The one script that does appear more than once, because `hypercorn` imports it out of
+  the directory you launch it from rather than taking a path to it.
 * `tcp_proxy.py` and `tls_proxy.py` — chapter 4; **Eve**'s evil tools.
 
 **Your scripts live at the chapter root**, next to `lib/`, and you run them from there; they
@@ -140,6 +142,11 @@ run *from*. Copying them forward works too, if you would rather:
 $ cd 03-ca-tls
 $ python ../02-certificates/create_private_key.py bob s3cr3t   # → 03-ca-tls/bob-private.pem
 ```
+
+**Your keys and certificates do travel with you.** Chapters 4 and 5 build on the ones you
+already made, so they open by asking you to copy your `*.pem` files across — and tell you
+what to rebuild instead, if you would rather start clean or fell behind. Certificates last
+two hours, so a chapter you come back to tomorrow wants fresh ones.
 
 Each chapter's README opens by saying what it needs.
 

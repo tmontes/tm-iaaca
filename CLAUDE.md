@@ -153,11 +153,10 @@ script being extended already imports `x509_compute`. Propagate, then `diff`.
 
 Two kinds of file sit at a chapter root, and **only the README distinguishes them**. Each chapter's
 preamble names what is **given**: `create_keypair.py` in 01, `create_private_key.py` in 02, `create_csr.py`
-+ `create_server_csr.py` + `webapp.py` in 03, the two proxies in 04. Everything else at the root
-(`encrypt.py`, `create_certificate.py`, `fetch.py`, …) is a **reference solution** — participants write
-their own. Producing the participant copy of a chapter means deleting the solutions and keeping
-`README.md`, `lib/`, and the given scripts. `05-broken/` gives nothing and solves nothing: it is
-`README.md` + `lib/`.
++ `create_server_csr.py` in 03, the two proxies in 04, and `webapp.py` in 03, 04 and 05. Everything else at
+the root (`encrypt.py`, `create_certificate.py`, `fetch.py`, …) is a **reference solution** — participants
+write their own. Producing the participant copy of a chapter means deleting the solutions and keeping
+`README.md`, `lib/`, and the given scripts. `05-broken/` solves nothing and gives only `webapp.py`.
 
 The keypair script is given rather than written so the first ten minutes teach the conventions by reading
 a complete example. It keeps the chapter-1 `compute`/`io` aliases, which is why every later script that
@@ -167,13 +166,28 @@ Scripts are named for what they produce, with `create_` as the default verb — 
 `create_private_key`, `create_certificate`, `create_ca`, `create_csr`. Reserve another verb for something
 that is genuinely not creation (`inspect_`, `verify_`, `issue_`, `fetch`).
 
-**Only `lib/` accumulates. Scripts do not — each one exists exactly once**, in the chapter that introduces
-it, and `03-ca-tls/` is `create_ca.py` + `issue_certificate.py` + `fetch.py` plus its three given files.
-Never copy a script forward into another chapter directory: to exercise chapter 3 end to end, invoke
+**Only `lib/` accumulates. Scripts do not — each one exists once**, in the chapter that introduces it, and
+`03-ca-tls/` is `create_ca.py` + `issue_certificate.py` + `fetch.py` plus its given files. Never copy a
+script forward into another chapter directory: to exercise chapter 3 end to end, invoke
 `../02-certificates/create_private_key.py` and `../02-certificates/inspect_certificate.py` **from inside
 `03-ca-tls/`**. The script's own directory is `sys.path[0]`, so each finds its own `lib/`; the cwd is where
-the `*.pem` files land. Participants may instead copy those scripts across by hand — both work, and the
-READMEs deliberately say what a chapter needs rather than where to put it.
+the `*.pem` files land.
+
+**`webapp.py` is the one exception, and it is a technical one.** Every other script is *invoked* — a path
+on the command line, so it runs wherever it lives. `webapp.py` is *imported*, by module name, out of
+hypercorn's working directory (`hypercorn ... webapp:app`). Serving chapter 3's copy from `04-mitm/` would
+mean `PYTHONPATH=../03-ca-tls hypercorn webapp:app`, which is exactly the mechanics the chapter READMEs
+avoid. So it ships in every chapter that serves — 03, 04 and 05 — and those three copies must stay
+byte-identical. The rule in one line: **scripts you invoke stay put; the one module hypercorn imports
+ships with each chapter that serves it.**
+
+**`*.pem` files, unlike scripts, do travel.** Chapters 4 and 5 open by telling participants to copy their
+certificates and keys across from the previous chapter, with rebuilding from scratch offered as the
+fallback for anyone who fell behind. Chapter 4 needs nothing new at all — every artefact it uses,
+including `workshop-ca`'s certificate over **Eve**'s request, already exists when chapter 3 ends.
+Certificates are valid for 7200 seconds, which covers a normal run but not a session resumed later; when
+reuse goes stale the symptom is `certificate has expired`, and in `05-broken` that quietly breaks the
+four-failure drill, which depends on **exactly one** certificate being expired.
 
 ## Per-chapter code architecture
 
