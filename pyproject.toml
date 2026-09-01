@@ -1,5 +1,5 @@
 [project]
-name = "trust-me-i-am-a-cert-auth"
+name = "tm-iaaca"
 version = "0.1.0"
 description = "Trust me, I'm a Certificate Authority"
 readme = "README.md"
