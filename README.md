@@ -132,9 +132,9 @@ introduces it. Tools you are given, beyond `lib/`:
 
 **Your scripts live at the chapter root**, next to `lib/`, and you run them from there; they
 read and write files in the current directory. Later chapters reuse earlier scripts, both
-yours and the given ones. Either copy them across as you go, or leave them where they are
-and name the path — what matters is the directory you run *from*, since that is where the
-`*.pem` files land:
+yours and the given ones. Leave them where you wrote them and name the path: each script
+finds its own `lib/`, and what decides where the `*.pem` files land is the directory you
+run *from*. Copying them forward works too, if you would rather:
 
 ```console
 $ cd 03-ca-tls
