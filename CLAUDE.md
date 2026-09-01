@@ -7,36 +7,66 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 Teaching material for a 2-hour interactive PyCon PT 2026 tutorial: *Trust Me, I'm a Certificate Authority* —
 participants build a miniature PKI (RSA → X.509 → CA → TLS → MITM) themselves, in Python.
 
-**`outline.md` is the authoritative spec** for content, sequencing, timing, and — importantly — what is
-*deliberately out of scope* (CRLs, OCSP, ACME, intermediate CA hierarchies, TLS handshake internals, ECC,
-PEM vs DER details). Read it before adding material; don't broaden scope beyond it.
+**The chapter `README.md` files are the spec** for content and sequencing; **`TIMING.md` is the delivery
+budget.** There was an `outline.md` holding the original design; it was deleted once the chapters diverged
+from it, and it is not coming back — don't reconstruct it.
+
+Deliberately out of scope, and to stay that way: CRLs, OCSP, ACME, intermediate CA hierarchies, TLS
+handshake internals, ECC, PEM vs DER details.
 
 The narrative thread is Alice / Bob / Eve and the single question "how can Alice know she's really talking to Bob?".
 Code should serve that narrative — small, readable, composable at the shell, and breakable on purpose.
 
 ## Layout and status
 
-Chapter directories map 1:1 onto `outline.md` parts:
-
-| Dir | Outline part | Status |
+| Dir | Subject | Status |
 |---|---|---|
-| `01-rsa/` | Part 1 — RSA fundamentals | implemented |
-| `02-certificates/` | Part 2 — X.509 certificates | implemented |
-| `03-ca/` | Part 3 — become a CA | implemented |
-| `04-tls/` | Part 4 — Flask/Hypercorn HTTPS + Requests | implemented |
-| `05-mitm/` | Part 5 — MITM and trust anchors | implemented |
-| `06-broken/` | Part 6 — break the PKI, diagnose broken certificates | implemented |
+| `01-rsa/` | RSA fundamentals | implemented |
+| `02-certificates/` | X.509 certificates | implemented |
+| `03-ca-tls/` | Become a CA, issue from CSRs, then Flask/Hypercorn HTTPS + Requests | implemented |
+| `04-mitm/` | MITM and trust anchors | implemented |
+| `05-broken/` | Break the PKI, diagnose broken certificates | implemented |
 
-`ca_compute.issue_certificate` already accepts a `dns_names` keyword that adds a Subject Alternative Name
-extension. Chapter 3 never passes it; chapter 4 must, because TLS clients ignore the Common Name and match
-hostnames against SANs only.
+Chapter 3 is a merge of what used to be `03-ca/` and `04-tls/`. They duplicated a full CA setup, a
+near-identical second issuing script, and the trust comparison — done by hand in one, by the TLS client in
+the other. Merged, the chapter runs problem → build → deploy → break: plain HTTP, create the CA, request
+and issue, serve HTTPS, then compare two `CN=bob` certificates. Don't split them back apart.
 
 Each chapter has its own `README.md` — the participant-facing exercise brief (numbered exercises, describing
-which scripts *they* write and which support modules are given to them). The root `README.md` is still empty.
+which scripts *they* write and which support modules are given to them).
 
-**`TIMING.md` is the delivery budget.** The material as built runs ~153 minutes against a 120-minute
-slot, so **adding an exercise costs something that is already overdrawn** — check it before proposing new
-material, and record the cost there. `outline.md` keeps the original schedule as the design record.
+## Public keys are not files
+
+`generate_keypair.py` writes a public key file **only in chapter 1**, where certificates do not exist yet and
+a bare public key genuinely has to travel between Alice and Bob. From chapter 2 on, a public key lives in
+exactly one place: the certificate that carries it. `rsa_io.save_public_key` and `rsa_io.load_public_key`
+still exist in every chapter's copy, because `rsa_io.py` stays byte-identical everywhere and only chapter 1
+calls them. Don't delete them, and don't reintroduce `-public.pem` anywhere else.
+
+Two consequences that are easy to undo by accident:
+
+* `verify_certificate.py` (chapter 2) takes an **issuer certificate**, not a public key, and reaches the key
+  through `x509_compute.get_public_key`.
+* `issue_certificate.py` (chapter 3) takes a **certificate signing request**, not a public key.
+
+## Certificates are issued from CSRs
+
+`ca_compute.create_csr` builds the request; `ca_compute.issue_certificate` takes that request and reads both
+the public key and the SAN `dns_names` out of it. `issue_certificate` has **no `dns_names` keyword** any
+more — a host name gets into a certificate by being in the request, which is why `create_server_csr.py` sits
+next to `create_csr.py`. Both are given; participants write the CA's side, not the subject's.
+
+**The CA takes the subject name from its own command line, not from the request.** That asymmetry is
+deliberate: it is what lets `workshop-ca` issue a certificate named `bob` from Eve's request, which is
+chapter 3's closing break-it drill and the setup for the whole MITM chapter. Don't "fix" it by reading the
+subject out of the CSR.
+
+`issue_certificate.py` refuses a request whose signature does not verify. A CSR is signed by the very key it
+carries, so that check proves possession of the private key and **nothing about the name** — which is exactly
+what the chapter asks immediately afterwards.
+
+The material as built runs ~142 minutes against a 120-minute slot, so **adding an exercise costs something
+that is already overdrawn** — check `TIMING.md` before proposing new material, and record the cost there.
 
 ## Chapter README style
 
@@ -60,8 +90,8 @@ Verified on 3.12.10 (OpenSSL 3.0.16) and 3.14.7 (OpenSSL 3.5.7) — identical be
 every error message the chapters rely on.
 
 **The server is `hypercorn`, not Waitress** — Waitress cannot do TLS at all, it expects a reverse proxy.
-`outline.md` has been corrected in both places it mentioned Waitress. Hypercorn serves the Flask WSGI app
-directly (no `WSGIMiddleware` needed) and takes `--certfile` / `--keyfile` / `--keyfile-password`.
+Hypercorn serves the Flask WSGI app directly (no `WSGIMiddleware` needed) and takes `--certfile` /
+`--keyfile` / `--keyfile-password`.
 
 **Certificates must carry key identifiers to work over TLS.** OpenSSL 3.5 (shipped with Python 3.14)
 enforces RFC 5280 strictly: a chain without `AuthorityKeyIdentifier` fails with *Missing Authority Key
@@ -119,18 +149,22 @@ belongs: `x509_compute.get_dns_names` exists for chapter 5's optional inspection
 script being extended already imports `x509_compute`. Propagate, then `diff`.
 
 Two kinds of file sit at a chapter root, and **only the README distinguishes them**. Each chapter's
-preamble names what is **given**: `generate_keypair.py` in every chapter, `webapp.py` in 04–06, the two
-proxies in 05. Everything else at the root (`encrypt.py`, `create_certificate.py`, `fetch.py`, …) is a
-**reference solution** — participants write their own. Producing the participant copy of a chapter means
-deleting the solutions and keeping `README.md`, `lib/`, and the given scripts.
+preamble names what is **given**: `generate_keypair.py` in every chapter, `create_csr.py` +
+`create_server_csr.py` + `webapp.py` in 03–05, the two proxies in 04. Everything else at the root
+(`encrypt.py`, `create_certificate.py`, `fetch.py`, …) is a **reference solution** — participants write their
+own. Producing the participant copy of a chapter means deleting the solutions and keeping `README.md`,
+`lib/`, and the given scripts.
 
 `generate_keypair.py` is given rather than written so the first ten minutes teach the conventions by
-reading a complete example. Its copies stay byte-identical, and it keeps the chapter-1 `compute`/`io`
-aliases everywhere, since a given file is copied verbatim rather than rewritten per chapter.
+reading a complete example. It keeps the chapter-1 `compute`/`io` aliases everywhere, since a given file is
+copied verbatim rather than rewritten per chapter. **It is the one given script whose copies are not all
+byte-identical:** chapter 1's writes a public key file too, chapters 2–5 write the private key only. The
+02–05 copies must stay byte-identical to each other; the CSR scripts and `webapp.py` are byte-identical
+across every chapter that carries them.
 
 **Only `lib/` accumulates. Scripts do not.** A chapter root carries just the scripts its own exercises
-introduce — `03-ca/` is `create_ca.py` + `issue_certificate.py`, nothing else. Never copy an earlier
-chapter's script forward: to exercise chapter 3 end to end, run `01-rsa/generate_keypair.py` and
+introduce — `03-ca-tls/` is `create_ca.py` + `issue_certificate.py` + `fetch.py`, nothing else. Never copy an
+earlier chapter's script forward: to exercise chapter 3 end to end, run `01-rsa/generate_keypair.py` and
 `02-certificates/inspect_certificate.py` from their own directories, which is what a participant does by
 hand with their own copies.
 
@@ -169,7 +203,9 @@ hand with their own copies.
   should keep making the insecure option visible instead of hiding it.
 - Crypto choices already fixed: RSA 2048 / e=65537, OAEP with MGF1-SHA256 for encryption, PSS with
   `MAX_LENGTH` salt and SHA256 for signatures, PEM `TraditionalOpenSSL` for private keys,
-  `SubjectPublicKeyInfo` for public keys.
+  `SubjectPublicKeyInfo` for public keys, SHA256 for certificate and CSR signatures.
+- `ca_io` defines its own `_save_bytes`, as `rsa_io` and `x509_io` already each do. Three near-identical
+  private helpers is the accepted cost of keeping the `io` modules independent of one another.
 
 ## Generated files
 

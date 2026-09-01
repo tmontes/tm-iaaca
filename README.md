@@ -17,7 +17,7 @@ Workshop material for PyCon PT 2026.
 
 ## The workshop
 
-Six chapters of guided exercises in which you build a miniature public-key infrastructure yourself:
+Five chapters of guided exercises in which you build a miniature public-key infrastructure yourself:
 RSA key pairs, signatures, X.509 certificates, your own certificate authority, a real HTTPS
 server with a real client that refuses to trust it — and then an interception attack that
 succeeds anyway.
@@ -87,16 +87,15 @@ One directory per chapter, worked in order:
 | (all) | `slides/` | Supporting slides. |
 | RSA | `01-rsa/` | Fundamentals: keys, encryption, signatures. |
 | Certificates | `02-certificates/` | X.509, identities, Subjects and Issuers. |
-| Build a CA | `03-ca/` | Issue and verify certificates. |
-| TLS Trust | `04-tls/` | Connect a Python client to a HTTPS-enabled Flask server. |
-| MITM | `05-mitm/` | Intercept the connection and discover why trust matters. |
-| Break It | `06-broken/` | Certificates that fail and checks that catch them. |
+| CA and TLS | `03-ca-tls/` | Become a CA, issue certificates, then serve and fetch over real HTTPS. |
+| MITM | `04-mitm/` | Intercept the connection and discover why trust matters. |
+| Break It | `05-broken/` | Certificates that fail and checks that catch them. |
 
 Each directory is self-contained with everything it needs inside it, so you can
 start any chapter from a clean slate:
 
 ```
-03-ca/
+03-ca-tls/
 ├── README.md              the exercises
 ├── lib/                   modules you are given
 │   ├── std_io.py            reading and writing the terminal
@@ -104,9 +103,12 @@ start any chapter from a clean slate:
 │   ├── rsa_io.py            loading and saving key files
 │   ├── x509_compute.py      building and reading certificates
 │   ├── x509_io.py           loading and saving certificate files
-│   ├── ca_compute.py        signing certificates as an authority
-│   └── ca_io.py             the files an authority keeps
-├── generate_keypair.py    a tool you are given
+│   ├── ca_compute.py        requesting certificates, and signing them as an authority
+│   └── ca_io.py             the files a request and an authority need
+├── generate_keypair.py    tools you are given
+├── create_csr.py
+├── create_server_csr.py
+├── webapp.py
 └── ...                    your own scripts go here
 ```
 
@@ -114,13 +116,15 @@ The `lib/` directory accumulates:
 chapter 1 has `std_io` and the `rsa_*` pair;
 chapter 2 adds `x509_*`;
 chapter 3 adds `ca_*`;
-chapters 4 to 6 carry all of them.
+chapters 4 and 5 carry all of them.
 
 Tools you are given, beyond `lib/`:
 
 * `generate_keypair.py` — in every chapter; read it for review and inspiration.
-* `webapp.py` — in chapters 4 to 6; a minimal Flask application to serve over TLS/HTTPS.
-* `tcp_proxy.py` and `tls_proxy.py` — in chapter 5; **Eve**'s evil tools.
+* `create_csr.py` and `create_server_csr.py` — in chapters 3 to 5; how a subject asks
+  a CA for a certificate.
+* `webapp.py` — in chapters 3 to 5; a minimal Flask application to serve over TLS/HTTPS.
+* `tcp_proxy.py` and `tls_proxy.py` — in chapter 4; **Eve**'s evil tools.
 
 **Your scripts live at the chapter root**, next to `lib/`, and you run them from there; they
 read and write files in the current directory. Later chapters reuse what you wrote earlier, so

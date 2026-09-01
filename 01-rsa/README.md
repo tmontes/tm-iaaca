@@ -83,7 +83,7 @@ Then break it:
 **Alice** and **Bob** can now exchange messages no one else can read,
 and prove to each other who wrote them.
 
-Those guarantees rest on a files named `alice-public.pem` and `bob-public.pem`.
+Those guarantees rest on two files named `alice-public.pem` and `bob-public.pem`.
 Who told **Bob** that key is **Alice**'s and vice-versa?
 
 RSA binds a signature to a *key*.
