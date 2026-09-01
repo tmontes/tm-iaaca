@@ -1,14 +1,16 @@
 # RSA Fundamentals
 
-The `lib/` directory holds the modules you are given: `rsa_compute.py` and `rsa_io.py`
-for keys, `std_io.py` to read and write the terminal. Import them as
-`from lib import rsa_compute as compute`, and write your own scripts next to `lib/`.
+You are given:
 
-`create_keypair.py` is given too — the one script you are handed whole.
-It is the shape all of these scripts take — read it before writing your own.
+* A library of modules, under `lib/`, containing `rsa_compute.py` and `rsa_io.py`
+  for RSA key handling and operations, and `std_io.py` to read and write the terminal;
+  import them with `from lib import rsa_compute` and create your scripts next to `lib/`.
 
-In this context *plain text* is human-readable text (Python `str` objects)
-while *ciphertext* is a binary payload (Python `bytes` objects);
+* The `create_keypair.py` script that generates RSA key pairs;
+  it is the shape all of these scripts take - read it before writing your own.
+
+In this context *plain text* is human-readable text (`str` objects)
+while *ciphertext* is a binary payload (`bytes` objects);
 the functions in `std_io.py` may come in handy to read/write these things.
 
 
@@ -16,37 +18,37 @@ the functions in `std_io.py` may come in handy to read/write these things.
 
 * Read `create_keypair.py`: a `cli_args()` that matches on the command line,
   then a `__main__` block that reads arguments, calls `compute`, and writes with `io`.
-  Nothing else. Yours will look like this.
+  Nothing else. Yours could look like this - or quite different, of course.
 
 * Use it to generate key pairs for **Alice** and **Bob**.
 
-* Look at the two files it wrote for each of them.
+* Look at the two files it wrote for each of them:
+  they are ASCII text files in the so-called PEM format.
   Which one could you publish, and what happens to the other if you lose it?
 
 
 ## 2. Encrypt and Decrypt
 
-
-* Create an `encrypt.py` script:
+* Create an `encrypt.py` script that
   encrypts a given plain text message with a given public key.
 
-* Create a reciprocal `decrypt.py` script:
+* Create a reciprocal `decrypt.py` script that
   decrypts a ciphertext payload with a given private key.
 
 * Exercise your scripts by having:
-  *  **Alice** encrypt a message to **Bob**, confirming **Bob** successfully decrypts it.
-  *  **Bob** responding with an encrypted message to **Alice**, that can also decrypt it.
+  * **Alice** encrypt a message to **Bob**, confirming **Bob** successfully decrypts it.
+  * **Bob** respond with an encrypted message to **Alice**, confirming she decrypts it too.
 
 * Try encrypting a message longer than 190 bytes.
-  RSA encrypts small payloads only — real systems use it to wrap a symmetric key instead.
+  RSA encrypts small payloads only - real systems use it to wrap a symmetric key instead.
 
 
 ## 3. Sign and Verify
 
-* Create a `sign.py` script:
+* Create a `sign.py` script that
   generates a signature from a given plain text message and private key.
 
-* Create a `verify.py` script:
+* Create a `verify.py` script that
   verifies a plain text message signature with a given public key.
 
 * Exercise your scripts by having a message signed by **Alice** and then:
@@ -60,9 +62,9 @@ Combine the two:
 a message only the recipient can read,
 that only the sender could have written.
 
-* Create a `send.py` script: signs and encrypts a given plain text message.
+* Create a `send.py` script that signs and encrypts a given plain text message.
 
-* Create a reciprocal `receive.py` script: decrypts and verifies.
+* Create a reciprocal `receive.py` script that decrypts and verifies.
 
 * Exercise them by having **Alice** and **Bob** exchange private, authenticated messages.
 
@@ -75,7 +77,7 @@ Then break it:
 
 * Generate a key pair for **Eve** and have her send **Bob** a message,
   which he receives using **Alice**'s public key.
-  He decrypts it perfectly — what does verification tell him that decryption cannot?
+  He decrypts it perfectly - what does verification tell him that decryption cannot?
 
 
 ## 5. Parting Thoughts
