@@ -1,12 +1,18 @@
 # Break the PKI
 
-Nothing new is given here, and `lib/` gains nothing —
-though it has been hiding something you have not used yet.
+You are given the `webapp.py` script again, so `hypercorn` can serve it from here.
+`lib/` gains nothing - though it has been hiding something you have not used yet.
 
-Bring your `create_ca.py`, `issue_certificate.py`, `fetch.py`
-and `inspect_certificate.py` along, with the `create_private_key.py`, `webapp.py`,
-`create_csr.py` and `create_server_csr.py` you were given earlier.
-Set up `workshop-ca`, `evil-ca`, and a key pair for `bob`.
+Copy your `*.pem` files across from the previous chapter: `workshop-ca` and `evil-ca`
+with their private keys, and a key pair for `bob`. You will be building new certificates
+out of those here, so bring these too, from the chapters where they live:
+
+* the given `create_csr.py` and `create_server_csr.py`;
+
+* your own `issue_certificate.py`, `fetch.py` and `inspect_certificate.py`.
+
+...or make the two CAs and the key again from scratch if you would rather start clean;
+for that, add the given `create_private_key.py` and your own `create_ca.py`.
 
 **Alice** trusts `workshop-ca`, and nothing else, for the whole of this chapter.
 **Bob** serves on 8443:
@@ -36,7 +42,7 @@ before you run it, then read what she actually says.
 
 * One issued by `workshop-ca` for `bob.local`.
 
-* One issued by `workshop-ca` from a request that never mentioned `localhost` —
+* One issued by `workshop-ca` from a request that never mentioned `localhost` -
   the plain `create_csr.py`, not the server one.
 
 * One issued by `workshop-ca` for `localhost` that expired an hour ago.
@@ -48,8 +54,8 @@ Then sort them out:
 * Two of those four fail with the *same* message, for entirely different reasons.
   Which two, and what would you have to look at to tell them apart?
 
-* One of the four is signed by a CA **Alice** trusts, names the host she asked for,
-  and has not expired. Why is it still refused?
+* The one from the plain request has a trusted issuer, the right subject and valid dates.
+  What is the client looking for that it does not find?
 
 * Put them in order, from the mistake easiest to make to the hardest.
 
@@ -62,7 +68,7 @@ The attack in the previous chapter passed all four, and nothing caught it.
 So, back to the question from the first ten minutes:
 how can **Alice** know she is really talking to **Bob**?
 
-You have built every piece of the answer — keys, signatures, certificates,
+You have built every piece of the answer - keys, signatures, certificates,
 an authority, a chain, and a handshake that refuses.
 The answer is in none of them.
 
