@@ -54,7 +54,7 @@ $ uv run python generate_keypair.py alice
 ```console
 $ python3 -m venv .venv
 $ source .venv/bin/activate          # Windows: .venv\Scripts\activate
-$ python -m pip install cryptography flask hypercorn requests
+$ python -m pip install -r requirements.txt
 ```
 
 Then commands are plain:
