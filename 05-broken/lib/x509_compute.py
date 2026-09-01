@@ -58,7 +58,7 @@ def get_public_key(certificate):
     return certificate.public_key()
 
 
-def get_certificate_public_bytes(certificate):
+def get_public_key_pem_bytes(certificate):
     return certificate.public_key().public_bytes(
         encoding=serialization.Encoding.PEM,
         format=serialization.PublicFormat.SubjectPublicKeyInfo

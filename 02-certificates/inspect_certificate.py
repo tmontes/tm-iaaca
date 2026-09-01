@@ -22,4 +22,4 @@ if __name__ == '__main__':
     std_io.write_text(compute.get_serial_number(certificate), lead='Serial number: ')
     std_io.write_text(compute.get_valid_from(certificate), lead='Valid from: ')
     std_io.write_text(compute.get_valid_until(certificate), lead='Valid until: ')
-    std_io.write_pem(compute.get_certificate_public_bytes(certificate), lead='Public key:')
+    std_io.write_pem(compute.get_public_key_pem_bytes(certificate), lead='Public key:')
