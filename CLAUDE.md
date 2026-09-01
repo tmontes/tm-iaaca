@@ -86,8 +86,8 @@ a `Then break it:` list.
 ## Commands
 
 `uv`-managed project, `requires-python >= 3.12`. Dependencies: `cryptography`, `flask`, `hypercorn`, `requests`.
-Verified on 3.12.10 (OpenSSL 3.0.16) and 3.14.7 (OpenSSL 3.5.7) — identical behaviour throughout, including
-every error message the chapters rely on.
+Verified on 3.12.10 (OpenSSL 3.0.16), 3.14.7 (OpenSSL 3.5.7) and 3.15.0rc1 (OpenSSL 3.5.7) — identical
+behaviour throughout, including every error message the chapters rely on.
 
 **The server is `hypercorn`, not Waitress** — Waitress cannot do TLS at all, it expects a reverse proxy.
 Hypercorn serves the Flask WSGI app directly (no `WSGIMiddleware` needed) and takes `--certfile` /
