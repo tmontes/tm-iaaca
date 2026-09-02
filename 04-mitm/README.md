@@ -28,28 +28,28 @@ This is the diagram from the first ten minutes, finally built:
 **Alice**, then **Eve**, then **Bob**. You will want a terminal for each.
 
 
-## 1. Eve Listens
+## 1. Eve Listens (instructor demo)
 
-Serve the application with no encryption, and put the wiretap in front of it -
-each in its own terminal:
+Watch, rather than run: your instructor serves the application with no encryption, and puts
+the wiretap in front of it - each in its own terminal:
 
 ```console
 $ hypercorn --bind localhost:8000 webapp:app      # bob serves
 $ python tcp_proxy.py 9000 8000                   # eve listens
 ```
 
-* Point **Alice**'s `fetch.py` at `http://localhost:9000`, then read **Eve**'s terminal.
+* **Alice**'s `fetch.py` goes to `http://localhost:9000`. Read **Eve**'s terminal.
   How much of the conversation does she have?
 
-Stop both with CTRL-C, then serve the same application over TLS
-and relay that instead:
+Both stop with CTRL-C, then the same application is served over TLS
+and relayed instead:
 
 ```console
 $ hypercorn --bind localhost:8443 --certfile CERTIFICATE --keyfile PRIVATE_KEY webapp:app   # bob serves
 $ python tcp_proxy.py 9000 8443                                                             # eve listens
 ```
 
-* Fetch `https://localhost:9000`, trusting `workshop-ca`. It works.
+* `fetch.py` goes to `https://localhost:9000`, trusting `workshop-ca`. It works.
   **Eve** sat in the middle of that connection and it still worked. Why?
 
 * Read her output again. The conversation is gone, but one thing is still legible -

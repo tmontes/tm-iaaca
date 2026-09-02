@@ -35,29 +35,33 @@ No new scripts here. Only certificates that do not work, and the question of why
 
 ## 2. Four Certificates That Fail
 
-Serve each of these to **Alice** in turn. For each one, predict the error
-before you run it, then read what she actually says.
+Two of these you build and serve yourself; two are discussion only - predict the error
+from the description alone, then compare notes before your instructor reveals it.
 
-* One issued by `evil-ca` for `localhost`.
+Hands-on:
 
 * One issued by `workshop-ca` for `bob.local`.
 
 * One issued by `workshop-ca` from a request that never mentioned `localhost` -
   the plain `create_csr.py`, not the server one.
 
+Discussion only:
+
+* One issued by `evil-ca` for `localhost`.
+
 * One issued by `workshop-ca` for `localhost` that expired an hour ago.
-  None of your scripts can do that. Use the library from the REPL
-  and move `valid_from` into the past.
+  None of your scripts can do that - it takes the library from the REPL,
+  moving `valid_from` into the past.
 
 Then sort them out:
 
-* Two of those four fail with the *same* message, for entirely different reasons.
-  Which two, and what would you have to look at to tell them apart?
+* The two you built fail with the *same* message, for entirely different reasons.
+  What would you have to look at to tell them apart?
 
 * The one from the plain request has a trusted issuer, the right subject and valid dates.
   What is the client looking for that it does not find?
 
-* Put them in order, from the mistake easiest to make to the hardest.
+* Put all four in order, from the mistake easiest to make to the hardest.
 
 
 ## 3. Parting Thoughts

@@ -4,6 +4,10 @@
 
 Workshop material for PyCon PT 2026.
 
+*This is the two-hour edition: a few more scripts are given rather than written, and
+`01-rsa` §4, the MITM wiretap, and two of the `05-broken` drills are demo or discussion
+instead of hands-on. See `TIMING.md` for the full breakdown.*
+
 ## DISCLAIMER
 
 **THIS IS TEACHING MATERIAL, NOT SECURITY SOFTWARE.**
@@ -122,6 +126,8 @@ introduces it — `webapp.py` excepted. Tools you are given, beyond `lib/`:
 
 * `create_keypair.py` — chapter 1; read it for review and inspiration. It writes both
   halves of the pair, which only chapter 1 needs.
+* `decrypt.py` and `verify.py` — chapter 1; the other half of `encrypt.py` and `sign.py`,
+  so you can exercise what you write without writing both directions.
 * `create_private_key.py` — chapter 2; the same thing writing the private key alone.
   From there on a public key travels inside a certificate, so this is the one the rest
   of the workshop uses.
