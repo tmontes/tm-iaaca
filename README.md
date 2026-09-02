@@ -4,6 +4,9 @@
 
 Workshop material for PyCon PT 2026.
 
+*This is the three-hour edition: every script below is participant-written except the
+given ones listed under Layout Details.*
+
 ## DISCLAIMER
 
 **THIS IS TEACHING MATERIAL, NOT SECURITY SOFTWARE.**
