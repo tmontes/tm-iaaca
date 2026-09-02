@@ -6,7 +6,7 @@ Workshop material for PyCon PT 2026.
 
 *This is the two-hour edition: a few more scripts are given rather than written, and
 `01-rsa` §4, the MITM wiretap, and two of the `05-broken` drills are demo or discussion
-instead of hands-on. See `TIMING.md` for the full breakdown.*
+instead of hands-on.*
 
 ## DISCLAIMER
 
