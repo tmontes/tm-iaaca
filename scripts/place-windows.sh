@@ -29,11 +29,23 @@ PDFL_ID=$(
         .id
     '
 )
+FFOX_ID=$(
+    yabai -m query --windows |
+    jq -r '.[] |
+        select(
+          ((.app // .name // "") | ascii_downcase | contains("firefox"))
+        ) |
+        .id
+    '
+)
 
 yabai -m window "${VSCODE_ID}" --move abs:${VSCODE_X}:${VSCODE_Y}
 yabai -m window "${VSCODE_ID}" --resize abs:${VSCODE_W}:${VSCODE_H}
 
 yabai -m window "${PDFL_ID}" --move abs:${PDFL_X}:${PDFL_Y}
 yabai -m window "${PDFL_ID}" --resize abs:${PDFL_W}:${PDFL_H}
+
+yabai -m window "${FFOX_ID}" --move abs:${PDFL_X}:${PDFL_Y}
+yabai -m window "${FFOX_ID}" --resize abs:${PDFL_W}:${PDFL_H}
 
 
